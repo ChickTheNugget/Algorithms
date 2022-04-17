@@ -9,7 +9,6 @@ vector<int> ans;
 
 void dfs(int node)
 {
-    
     for (auto& edge : adj[node]){
         int t = edge;
         if (edge <= -1) continue;
@@ -49,15 +48,8 @@ int main() {
             return 0;
         }
     }
-    for (int i = 1; i <= n; i++){
-        cout << outd[i] << " ";
-    }
-    cout << endl;
     dfs(c);
-    cout << endl;
     for (auto a : ans){
         cout << a << " ";
     }
-    
-
 }
