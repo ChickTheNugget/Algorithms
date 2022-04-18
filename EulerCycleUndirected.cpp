@@ -6,20 +6,20 @@ int outd[100];
 vector<int> adj[100];
 vector<int> ans;
 bool vis[100];
-int cnt = 0;
 int n, m;
-
-int dfscheck(int node, int a, int b)
+//circuit if every vertex has even degree
+//path if all even or 2 odd degree
+int dfscheck(int node, int a, int b, int cnt)
 {
     vis[node] = true;
     for (auto edge : adj[node]){
-        if (!vis[edge] and edge != -1){
+        if (!vis[edge]){
             if (a == node and b == edge) continue;
             if (b == node and a == edge) continue;
-            cnt += dfscheck(edge, a, b);
+            cnt += dfscheck(edge, a, b, cnt);
         }
     }
-    return cnt;
+    return cnt + 1;
 }
 
 bool isValid(int node, int edge, int a, int b)
@@ -28,13 +28,10 @@ bool isValid(int node, int edge, int a, int b)
         return true;
     }
     memset(vis, false, sizeof(vis));
-    dfscheck(node, -1, -1);
-    int c = cnt;
-    cnt = 0;
+    int c = dfscheck(node, -1, -1, 0);;
     memset(vis, false, sizeof(vis));
-    dfscheck(node, a, b);
-    int c1 = cnt;
-    cnt = 0;
+    int c1 = dfscheck(node, a, b, 0);
+    //cout << endl;
     // cout << c << " " << c1 << endl;
     if (c == c1) return true;
     else return false;
@@ -47,7 +44,6 @@ void remove_edge(int node, int edge)
     *it = -1;
     it = find(adj[edge].begin(), adj[edge].end(), node);
     *it = -1;
-
 }
 
 void dfs(int node, int par)
@@ -63,9 +59,9 @@ void dfs(int node, int par)
             remove_edge(node, edge);
             dfs(edge, node);
         }
-        // else{
-        //     cout << "NO " << node << " " << edge << endl;
-        // }
+        else{
+            //cout << "NO " << node << " " << edge << endl;
+        }
     }
     
 }
@@ -104,13 +100,15 @@ int main() {
     }
     if (odd > 3 or odd == 1){
         cout << "IMPOSSIBLE";
+        return 0;
     }
-    if (odd == 0) cout << "only path possible\n";
+    if (odd == 0) cout << "only circuit possible\n";
+    else cout << "only path possible\n";
     if (nodeodd != -1) node = nodeodd;
-    //cout << node << endl;
-    //dfs the graph
+    // dfs the graph
     // if only edge then yes
     // else if bridge no go next
+    node = 5;
     ans.push_back(node);
     dfs(node, -1);
     for (auto a : ans){
